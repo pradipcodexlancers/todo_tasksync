@@ -35,7 +35,7 @@ class MyApp extends StatelessWidget {
       // Light & Dark Themes
       theme: AppTheme.lightTheme,
       darkTheme: AppTheme.darkTheme,
-      themeMode: ThemeMode.system,
+      themeMode: ThemeMode.light,
 
       // Navigation & Routing via GetPages
       initialRoute: AppRoutes.initial,
