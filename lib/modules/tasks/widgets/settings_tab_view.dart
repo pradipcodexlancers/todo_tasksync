@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../../core/constants/app_colors.dart';
+import '../../../core/utils/error_handler.dart';
+import '../../../services/auth_service.dart';
 import '../controller/task_controller.dart';
 
 /// Settings Tab View
@@ -214,6 +216,31 @@ class SettingsTabView extends GetView<TaskController> {
                     colorText: AppColors.textPrimary,
                     margin: const EdgeInsets.all(16),
                   );
+                },
+              ),
+            ],
+          ),
+
+          const SizedBox(height: 24),
+
+          // Account Section
+          _buildSectionHeader('Account'),
+          const SizedBox(height: 10),
+          _buildSettingsCard(
+            children: [
+              _buildTapTile(
+                icon: Icons.logout_rounded,
+                iconColor: Colors.redAccent,
+                title: 'Logout',
+                titleColor: Colors.redAccent,
+                subtitle: 'Sign out of your account',
+                onTap: () async {
+                  try {
+                    // AuthService navigates to login when the session ends
+                    await Get.find<AuthService>().logout();
+                  } catch (e) {
+                    AppErrorHandler.show(e, title: 'Logout failed');
+                  }
                 },
               ),
             ],
