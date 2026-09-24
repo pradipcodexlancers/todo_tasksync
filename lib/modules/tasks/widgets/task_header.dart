@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_strings.dart';
+import '../../../services/auth_service.dart';
 import '../controller/task_controller.dart';
 
 /// Task Screen Header
@@ -9,6 +10,13 @@ import '../controller/task_controller.dart';
 /// Displays the title, subtitle, sync indicator badge, avatar, and options button.
 class TaskHeader extends GetView<TaskController> {
   const TaskHeader({super.key});
+
+  AuthService get _auth => Get.find<AuthService>();
+
+  String get _initial {
+    final source = _auth.userName.isNotEmpty ? _auth.userName : _auth.userEmail;
+    return source.isEmpty ? '?' : source[0].toUpperCase();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -64,10 +72,10 @@ class TaskHeader extends GetView<TaskController> {
                         ),
                       ],
                     ),
-                    child: const Center(
+                    child: Center(
                       child: Text(
-                        'A',
-                        style: TextStyle(
+                        _initial,
+                        style: const TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.w700,
                           color: AppColors.textSecondary,
@@ -113,12 +121,26 @@ class TaskHeader extends GetView<TaskController> {
         // Synced badge pill
         Obx(() {
           final isSyncing = controller.isSyncing.value;
+          final isOnline = controller.isOnline.value;
+          final pendingCount = controller.pendingSyncCount;
+          final String label;
+          if (isSyncing) {
+            label = 'Syncing...';
+          } else if (!isOnline) {
+            label = pendingCount > 0 ? 'Offline - $pendingCount pending' : 'Offline';
+          } else if (pendingCount > 0) {
+            label = '$pendingCount pending sync';
+          } else {
+            label = AppStrings.syncedJustNow;
+          }
+          final isWarning = !isOnline || pendingCount > 0;
+
           return GestureDetector(
-            onTap: controller.triggerSync,
+            onTap: controller.syncTodos,
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
               decoration: BoxDecoration(
-                color: AppColors.syncBadgeBg,
+                color: isWarning ? AppColors.pendingSyncBg : AppColors.syncBadgeBg,
                 borderRadius: BorderRadius.circular(16),
               ),
               child: Row(
@@ -127,16 +149,16 @@ class TaskHeader extends GetView<TaskController> {
                   Container(
                     width: 7,
                     height: 7,
-                    decoration: const BoxDecoration(
-                      color: AppColors.syncBadgeDot,
+                    decoration: BoxDecoration(
+                      color: isWarning ? AppColors.pendingSyncText : AppColors.syncBadgeDot,
                       shape: BoxShape.circle,
                     ),
                   ),
                   const SizedBox(width: 6),
                   Text(
-                    isSyncing ? 'Syncing...' : AppStrings.syncedJustNow,
-                    style: const TextStyle(
-                      color: AppColors.syncBadgeText,
+                    label,
+                    style: TextStyle(
+                      color: isWarning ? AppColors.pendingSyncText : AppColors.syncBadgeText,
                       fontSize: 12,
                       fontWeight: FontWeight.w600,
                     ),
@@ -183,10 +205,10 @@ class TaskHeader extends GetView<TaskController> {
                   color: AppColors.primaryLight,
                   shape: BoxShape.circle,
                 ),
-                child: const Center(
+                child: Center(
                   child: Text(
-                    'A',
-                    style: TextStyle(
+                    _initial,
+                    style: const TextStyle(
                       fontSize: 26,
                       fontWeight: FontWeight.w700,
                       color: AppColors.primary,
@@ -197,18 +219,18 @@ class TaskHeader extends GetView<TaskController> {
               const SizedBox(height: 12),
 
               // Name & Email
-              const Text(
-                'Alex Morgan',
-                style: TextStyle(
+              Text(
+                _auth.userName,
+                style: const TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.w700,
                   color: AppColors.textPrimary,
                 ),
               ),
               const SizedBox(height: 4),
-              const Text(
-                'alex.morgan@tasksync.app',
-                style: TextStyle(
+              Text(
+                _auth.userEmail,
+                style: const TextStyle(
                   fontSize: 13,
                   color: AppColors.textSecondary,
                 ),
@@ -352,7 +374,7 @@ class TaskHeader extends GetView<TaskController> {
                 subtitle: 'Trigger instant synchronization with cloud',
                 onTap: () {
                   Get.back();
-                  controller.triggerSync();
+                  controller.syncTodos();
                 },
               ),
 

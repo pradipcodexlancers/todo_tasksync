@@ -9,6 +9,7 @@ import 'core/theme/app_theme.dart';
 import 'services/auth_service.dart';
 import 'services/local_storage_service.dart';
 import 'services/storage_service.dart';
+import 'services/todo_service.dart';
 
 /// Entry point of the application
 Future<void> main() async {
@@ -36,6 +37,9 @@ Future<void> _initServices() async {
 
   // Auth Service (Supabase session, login, logout)
   Get.put<AuthService>(AuthService(), permanent: true);
+
+  // Todo Service (Supabase RPC: get / create / update / delete todos)
+  Get.put<TodoService>(TodoService(), permanent: true);
 }
 
 /// Root Application Widget using GetMaterialApp

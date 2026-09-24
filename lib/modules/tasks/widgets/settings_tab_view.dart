@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../../core/constants/app_colors.dart';
+import '../../../core/utils/app_utils.dart';
 import '../../../core/utils/error_handler.dart';
 import '../../../services/auth_service.dart';
 import '../controller/task_controller.dart';
@@ -14,6 +15,10 @@ class SettingsTabView extends GetView<TaskController> {
 
   @override
   Widget build(BuildContext context) {
+    final auth = Get.find<AuthService>();
+    final initialSource = auth.userName.isNotEmpty ? auth.userName : auth.userEmail;
+    final initial = initialSource.isEmpty ? '?' : initialSource[0].toUpperCase();
+
     return SingleChildScrollView(
       physics: const BouncingScrollPhysics(),
       padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
@@ -63,10 +68,10 @@ class SettingsTabView extends GetView<TaskController> {
                     color: AppColors.primaryLight,
                     shape: BoxShape.circle,
                   ),
-                  child: const Center(
+                  child: Center(
                     child: Text(
-                      'A',
-                      style: TextStyle(
+                      initial,
+                      style: const TextStyle(
                         fontSize: 22,
                         fontWeight: FontWeight.w700,
                         color: AppColors.primary,
@@ -78,19 +83,19 @@ class SettingsTabView extends GetView<TaskController> {
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
-                    children: const [
+                    children: [
                       Text(
-                        'Alex Morgan',
-                        style: TextStyle(
+                        auth.userName,
+                        style: const TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.w700,
                           color: AppColors.textPrimary,
                         ),
                       ),
-                      SizedBox(height: 3),
+                      const SizedBox(height: 3),
                       Text(
-                        'alex.morgan@tasksync.app',
-                        style: TextStyle(
+                        auth.userEmail,
+                        style: const TextStyle(
                           fontSize: 13,
                           color: AppColors.textSecondary,
                         ),
@@ -137,14 +142,18 @@ class SettingsTabView extends GetView<TaskController> {
                 title: 'Sync Now',
                 subtitle: 'Push pending changes to cloud',
                 trailing: Obx(() => Text(
-                      controller.isSyncing.value ? 'Syncing...' : 'Synced',
+                      controller.isSyncing.value
+                          ? 'Syncing...'
+                          : controller.pendingSyncCount > 0
+                              ? '${controller.pendingSyncCount} pending'
+                              : 'Synced',
                       style: const TextStyle(
                         fontSize: 12,
                         fontWeight: FontWeight.w600,
                         color: AppColors.syncBadgeText,
                       ),
                     )),
-                onTap: controller.triggerSync,
+                onTap: controller.syncTodos,
               ),
             ],
           ),
@@ -184,23 +193,6 @@ class SettingsTabView extends GetView<TaskController> {
           _buildSettingsCard(
             children: [
               _buildTapTile(
-                icon: Icons.replay_rounded,
-                title: 'Reset to Sample Tasks',
-                subtitle: 'Restore demo tasks from screenshot',
-                onTap: () {
-                  controller.resetSampleTasks();
-                  Get.snackbar(
-                    'Reset Completed',
-                    'Sample tasks have been restored',
-                    snackPosition: SnackPosition.BOTTOM,
-                    backgroundColor: AppColors.cardSurface,
-                    colorText: AppColors.textPrimary,
-                    margin: const EdgeInsets.all(16),
-                  );
-                },
-              ),
-              const Divider(height: 1, indent: 56, endIndent: 16),
-              _buildTapTile(
                 icon: Icons.delete_outline_rounded,
                 iconColor: Colors.redAccent,
                 title: 'Clear Completed Tasks',
@@ -235,6 +227,21 @@ class SettingsTabView extends GetView<TaskController> {
                 titleColor: Colors.redAccent,
                 subtitle: 'Sign out of your account',
                 onTap: () async {
+                  final unsavedCount = controller.pendingSyncCount;
+                  final confirmed = await AppUtils.showConfirmDialog(
+                    title: 'Log out?',
+                    message: unsavedCount > 0
+                        ? 'You have $unsavedCount ${unsavedCount == 1 ? 'change' : 'changes'} that '
+                            'haven\'t been saved online yet (you were offline).\n\n'
+                            'If you log out now, ${unsavedCount == 1 ? 'it' : 'they'} will be lost. '
+                            'Connect to the internet first to keep ${unsavedCount == 1 ? 'it' : 'them'}.'
+                        : 'Your tasks will be removed from this device.\n\n'
+                            'Don\'t worry, they are safely saved in your account and will come back '
+                            'when you log in again.',
+                    confirmText: unsavedCount > 0 ? 'Log out anyway' : 'Log out',
+                  );
+                  if (!confirmed) return;
+
                   try {
                     // AuthService navigates to login when the session ends
                     await Get.find<AuthService>().logout();

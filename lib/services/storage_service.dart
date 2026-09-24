@@ -1,19 +1,15 @@
 import 'package:get/get.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
-/// Local Storage Service
+/// Local Storage Service (SharedPreferences)
 ///
-/// Manages persistent local key-value storage (such as auth tokens, user session,
+/// Manages persistent local key-value storage (such as the logged-in user id,
 /// app preferences, or onboarding flags).
-///
-/// HOW TO INTEGRATE:
-/// To persist data to disk, add `shared_preferences` or `get_storage` to pubspec.yaml
-/// and initialize it inside [init].
 ///
 /// In main.dart, call:
 /// `await Get.putAsync(() => StorageService().init());`
 class StorageService extends GetxService {
-  // In-memory cache map for boilerplate demonstration
-  final Map<String, dynamic> _memoryCache = {};
+  late final SharedPreferences _prefs;
 
   // Common Storage Keys
   static const String keyToken = 'auth_token';
@@ -21,35 +17,51 @@ class StorageService extends GetxService {
   static const String keyIsLoggedIn = 'is_logged_in';
   static const String keyThemeMode = 'theme_mode';
 
-  /// Async initialization called before `runApp()` or in initial bindings
+  /// Async initialization called before `runApp()`
   Future<StorageService> init() async {
-    // Example: Initialize SharedPreferences / GetStorage here
-    // final prefs = await SharedPreferences.getInstance();
+    _prefs = await SharedPreferences.getInstance();
     return this;
   }
 
-  /// Write a value to storage
+  /// Id of the logged-in user, saved at login
+  String? get userId => read<String>(keyUserId);
+
+  Future<void> saveUserId(String id) => write(keyUserId, id);
+
+  /// Write a value to storage (String, bool, int, double or `List<String>`)
   Future<void> write(String key, dynamic value) async {
-    _memoryCache[key] = value;
+    if (value is String) {
+      await _prefs.setString(key, value);
+    } else if (value is bool) {
+      await _prefs.setBool(key, value);
+    } else if (value is int) {
+      await _prefs.setInt(key, value);
+    } else if (value is double) {
+      await _prefs.setDouble(key, value);
+    } else if (value is List<String>) {
+      await _prefs.setStringList(key, value);
+    } else {
+      throw ArgumentError('Unsupported type for key "$key": ${value.runtimeType}');
+    }
   }
 
   /// Read a value from storage
   T? read<T>(String key) {
-    return _memoryCache[key] as T?;
+    return _prefs.get(key) as T?;
   }
 
   /// Check if a key exists in storage
   bool hasData(String key) {
-    return _memoryCache.containsKey(key);
+    return _prefs.containsKey(key);
   }
 
   /// Remove a specific key from storage
   Future<void> remove(String key) async {
-    _memoryCache.remove(key);
+    await _prefs.remove(key);
   }
 
   /// Clear all stored data (e.g. on logout)
   Future<void> clearAll() async {
-    _memoryCache.clear();
+    await _prefs.clear();
   }
 }

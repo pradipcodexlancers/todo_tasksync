@@ -1,20 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+
 import '../../../core/constants/app_colors.dart';
 import '../controller/task_controller.dart';
-import '../models/task_model.dart';
+import '../models/todo_model.dart';
+import 'task_form_sheet.dart';
 
 /// Task Item Card Widget
 ///
 /// Renders an individual task with its checkbox, title, priority pill,
 /// subtitle, tags, due date, and sync status.
 class TaskCard extends GetView<TaskController> {
-  final TaskModel task;
+  final TodoModel task;
 
-  const TaskCard({
-    super.key,
-    required this.task,
-  });
+  const TaskCard({super.key, required this.task});
 
   @override
   Widget build(BuildContext context) {
@@ -25,11 +24,7 @@ class TaskCard extends GetView<TaskController> {
         color: AppColors.cardSurface,
         borderRadius: BorderRadius.circular(22),
         boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.035),
-            blurRadius: 10,
-            offset: const Offset(0, 3),
-          ),
+          BoxShadow(color: Colors.black.withValues(alpha: 0.035), blurRadius: 10, offset: const Offset(0, 3)),
         ],
       ),
       child: Row(
@@ -37,31 +32,21 @@ class TaskCard extends GetView<TaskController> {
         children: [
           // Rounded Checkbox
           GestureDetector(
-            onTap: () => controller.toggleTask(task.id),
+            onTap: () => controller.toggleTask(task.key),
             child: AnimatedContainer(
               duration: const Duration(milliseconds: 200),
               width: 26,
               height: 26,
               margin: const EdgeInsets.only(top: 2),
               decoration: BoxDecoration(
-                color: task.isCompleted
-                    ? AppColors.checkboxCheckedBg
-                    : Colors.transparent,
+                color: task.isCompleted ? AppColors.checkboxCheckedBg : Colors.transparent,
                 borderRadius: BorderRadius.circular(8),
                 border: Border.all(
-                  color: task.isCompleted
-                      ? AppColors.checkboxCheckedBg
-                      : AppColors.checkboxBorder,
+                  color: task.isCompleted ? AppColors.checkboxCheckedBg : AppColors.checkboxBorder,
                   width: 1.6,
                 ),
               ),
-              child: task.isCompleted
-                  ? const Icon(
-                      Icons.check,
-                      size: 17,
-                      color: Colors.white,
-                    )
-                  : null,
+              child: task.isCompleted ? const Icon(Icons.check, size: 17, color: Colors.white) : null,
             ),
           ),
 
@@ -83,12 +68,8 @@ class TaskCard extends GetView<TaskController> {
                         style: TextStyle(
                           fontSize: 15.5,
                           fontWeight: FontWeight.w700,
-                          color: task.isCompleted
-                              ? AppColors.textSecondary
-                              : AppColors.textPrimary,
-                          decoration: task.isCompleted
-                              ? TextDecoration.lineThrough
-                              : TextDecoration.none,
+                          color: task.isCompleted ? AppColors.textSecondary : AppColors.textPrimary,
+                          decoration: task.isCompleted ? TextDecoration.lineThrough : TextDecoration.none,
                           decorationColor: AppColors.textSecondary,
                         ),
                       ),
@@ -98,33 +79,20 @@ class TaskCard extends GetView<TaskController> {
 
                     // Priority Badge
                     Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 8,
-                        vertical: 3,
-                      ),
-                      decoration: BoxDecoration(
-                        color: task.priorityBgColor,
-                        borderRadius: BorderRadius.circular(12),
-                      ),
+                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                      decoration: BoxDecoration(color: task.priorityBgColor, borderRadius: BorderRadius.circular(12)),
                       child: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           Container(
                             width: 6,
                             height: 6,
-                            decoration: BoxDecoration(
-                              color: task.priorityTextColor,
-                              shape: BoxShape.circle,
-                            ),
+                            decoration: BoxDecoration(color: task.priorityTextColor, shape: BoxShape.circle),
                           ),
                           const SizedBox(width: 4),
                           Text(
                             task.priorityLabel,
-                            style: TextStyle(
-                              fontSize: 11,
-                              fontWeight: FontWeight.w700,
-                              color: task.priorityTextColor,
-                            ),
+                            style: TextStyle(fontSize: 11, fontWeight: FontWeight.w700, color: task.priorityTextColor),
                           ),
                         ],
                       ),
@@ -134,21 +102,17 @@ class TaskCard extends GetView<TaskController> {
 
                     // 3 Vertical Dots Menu
                     PopupMenuButton<String>(
-                      icon: const Icon(
-                        Icons.more_vert,
-                        size: 18,
-                        color: AppColors.inactiveNav,
-                      ),
+                      icon: const Icon(Icons.more_vert, size: 18, color: AppColors.inactiveNav),
                       padding: EdgeInsets.zero,
                       constraints: const BoxConstraints(),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                       onSelected: (value) {
                         if (value == 'toggle') {
-                          controller.toggleTask(task.id);
+                          controller.toggleTask(task.key);
+                        } else if (value == 'edit') {
+                          TaskFormSheet.show(context, todo: task);
                         } else if (value == 'delete') {
-                          controller.tasks.removeWhere((t) => t.id == task.id);
+                          controller.deleteTask(task.key);
                         }
                       },
                       itemBuilder: (context) => [
@@ -160,28 +124,26 @@ class TaskCard extends GetView<TaskController> {
                           ),
                         ),
                         const PopupMenuItem(
+                          value: 'edit',
+                          child: Text('Edit Task', style: TextStyle(fontSize: 13)),
+                        ),
+                        const PopupMenuItem(
                           value: 'delete',
-                          child: Text(
-                            'Delete Task',
-                            style: TextStyle(fontSize: 13, color: Colors.red),
-                          ),
+                          child: Text('Delete Task', style: TextStyle(fontSize: 13, color: Colors.red)),
                         ),
                       ],
                     ),
                   ],
                 ),
 
-                const SizedBox(height: 4),
-
-                // Subtitle / Notes
-                Text(
-                  task.subtitle,
-                  style: const TextStyle(
-                    fontSize: 13,
-                    color: AppColors.textSecondary,
-                    height: 1.3,
+                // Description / Notes
+                if (task.description?.isNotEmpty ?? false) ...[
+                  const SizedBox(height: 4),
+                  Text(
+                    task.description!,
+                    style: const TextStyle(fontSize: 13, color: AppColors.textSecondary, height: 1.3),
                   ),
-                ),
+                ],
 
                 const SizedBox(height: 10),
 
@@ -189,57 +151,37 @@ class TaskCard extends GetView<TaskController> {
                 Row(
                   children: [
                     // Category Tag Badge
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 10,
-                        vertical: 3,
-                      ),
-                      decoration: BoxDecoration(
-                        color: task.tagBgColor,
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: Text(
-                        task.tag,
-                        style: TextStyle(
-                          fontSize: 11.5,
-                          fontWeight: FontWeight.w700,
-                          color: task.tagTextColor,
+                    if (task.category != null) ...[
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 3),
+                        decoration: BoxDecoration(color: task.tagBgColor, borderRadius: BorderRadius.circular(12)),
+                        child: Text(
+                          task.category!,
+                          style: TextStyle(fontSize: 11.5, fontWeight: FontWeight.w700, color: task.tagTextColor),
                         ),
                       ),
-                    ),
-
-                    const SizedBox(width: 8),
+                      const SizedBox(width: 8),
+                    ],
 
                     // Due Date / Done Info
                     Text(
                       task.dueText,
-                      style: const TextStyle(
-                        fontSize: 12,
-                        fontWeight: FontWeight.w500,
-                        color: AppColors.textSecondary,
-                      ),
+                      style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w500, color: AppColors.textSecondary),
                     ),
 
                     const Spacer(),
 
                     // Pending Sync Badge
-                    if (task.syncStatus == TaskSyncStatus.pendingSync)
+                    if (task.isPendingSync)
                       Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 8,
-                          vertical: 3,
-                        ),
+                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                         decoration: BoxDecoration(
                           color: AppColors.pendingSyncBg,
                           borderRadius: BorderRadius.circular(12),
                         ),
                         child: const Text(
                           'Pending Sync',
-                          style: TextStyle(
-                            fontSize: 11,
-                            fontWeight: FontWeight.w700,
-                            color: AppColors.pendingSyncText,
-                          ),
+                          style: TextStyle(fontSize: 11, fontWeight: FontWeight.w700, color: AppColors.pendingSyncText),
                         ),
                       ),
                   ],

@@ -117,7 +117,7 @@ class CompletedTabView extends GetView<TaskController> {
                 itemBuilder: (context, index) {
                   final task = completedTasks[index];
                   return TaskCard(
-                    key: ValueKey(task.id),
+                    key: ValueKey(task.key),
                     task: task,
                   );
                 },
