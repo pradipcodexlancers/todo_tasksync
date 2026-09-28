@@ -102,7 +102,7 @@ class TaskCard extends GetView<TaskController> {
 
                     // 3 Vertical Dots Menu
                     PopupMenuButton<String>(
-                      icon: const Icon(Icons.more_vert, size: 18, color: AppColors.inactiveNav),
+                      icon: Icon(Icons.more_vert, size: 18, color: AppColors.inactiveNav),
                       padding: EdgeInsets.zero,
                       constraints: const BoxConstraints(),
                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
@@ -141,7 +141,7 @@ class TaskCard extends GetView<TaskController> {
                   const SizedBox(height: 4),
                   Text(
                     task.description!,
-                    style: const TextStyle(fontSize: 13, color: AppColors.textSecondary, height: 1.3),
+                    style: TextStyle(fontSize: 13, color: AppColors.textSecondary, height: 1.3),
                   ),
                 ],
 
@@ -166,7 +166,7 @@ class TaskCard extends GetView<TaskController> {
                     // Due Date / Done Info
                     Text(
                       task.dueText,
-                      style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w500, color: AppColors.textSecondary),
+                      style: TextStyle(fontSize: 12, fontWeight: FontWeight.w500, color: AppColors.textSecondary),
                     ),
 
                     const Spacer(),

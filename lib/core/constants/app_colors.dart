@@ -3,28 +3,33 @@ import 'package:flutter/material.dart';
 /// Application Color Palette
 ///
 /// Tailored design tokens matching the My Tasks UI.
+/// Surface, text and neutral colors are getters that follow [isDark]
+/// (kept in sync by ThemeService), so they can't be used in `const` widgets.
 class AppColors {
   AppColors._();
+
+  /// Current theme brightness, set by ThemeService
+  static bool isDark = false;
 
   // Primary Palette
   static const Color primary = Color(0xFF7065F0);
   static const Color primaryDark = Color(0xFF5B50D6);
-  static const Color primaryLight = Color(0xFFEDE9FE);
+  static Color get primaryLight => isDark ? const Color(0xFF2E2A5C) : const Color(0xFFEDE9FE);
 
   // Background & Surfaces
-  static const Color scaffoldBackground = Color(0xFFF7F5F0);
-  static const Color cardSurface = Colors.white;
+  static Color get scaffoldBackground => isDark ? const Color(0xFF14151C) : const Color(0xFFF7F5F0);
+  static Color get cardSurface => isDark ? darkSurface : Colors.white;
   static const Color darkSurface = Color(0xFF1E202C);
   static const Color cardShadow = Color(0x0A000000);
 
   // Text Colors
-  static const Color textPrimary = Color(0xFF1E2432);
-  static const Color textSecondary = Color(0xFF8A8FA3);
-  static const Color textMuted = Color(0xFFA5AAB9);
+  static Color get textPrimary => isDark ? const Color(0xFFF1F2F6) : const Color(0xFF1E2432);
+  static Color get textSecondary => isDark ? const Color(0xFF9CA1B4) : const Color(0xFF8A8FA3);
+  static Color get textMuted => isDark ? const Color(0xFF6B7085) : const Color(0xFFA5AAB9);
   static const Color textLight = Colors.white;
 
   // Checkbox Colors
-  static const Color checkboxBorder = Color(0xFFD4D0F8);
+  static Color get checkboxBorder => isDark ? const Color(0xFF4A4580) : const Color(0xFFD4D0F8);
   static const Color checkboxCheckedBg = Color(0xFF10B981);
 
   // Sync Badge
@@ -64,7 +69,7 @@ class AppColors {
   static const Color pendingSyncText = Color(0xFFD97706);
 
   // Inactive elements
-  static const Color inactiveNav = Color(0xFF94A3B8);
-  static const Color iconLight = Color(0xFF64748B);
-  static const Color circleButtonBg = Color(0xFFFFFFFF);
+  static Color get inactiveNav => isDark ? const Color(0xFF6B7085) : const Color(0xFF94A3B8);
+  static Color get iconLight => isDark ? const Color(0xFF9CA1B4) : const Color(0xFF64748B);
+  static Color get circleButtonBg => isDark ? darkSurface : const Color(0xFFFFFFFF);
 }
