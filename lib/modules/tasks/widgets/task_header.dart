@@ -75,7 +75,7 @@ class TaskHeader extends GetView<TaskController> {
                     child: Center(
                       child: Text(
                         _initial,
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.w700,
                           color: AppColors.textSecondary,
@@ -103,7 +103,7 @@ class TaskHeader extends GetView<TaskController> {
                   ),
                   child: IconButton(
                     padding: EdgeInsets.zero,
-                    icon: const Icon(
+                    icon: Icon(
                       Icons.more_horiz,
                       color: AppColors.iconLight,
                       size: 22,
@@ -179,7 +179,7 @@ class TaskHeader extends GetView<TaskController> {
         color: Colors.transparent,
         child: Container(
           padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
-          decoration: const BoxDecoration(
+          decoration: BoxDecoration(
             color: AppColors.cardSurface,
             borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
           ),
@@ -221,7 +221,7 @@ class TaskHeader extends GetView<TaskController> {
               // Name & Email
               Text(
                 _auth.userName,
-                style: const TextStyle(
+                style: TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.w700,
                   color: AppColors.textPrimary,
@@ -230,7 +230,7 @@ class TaskHeader extends GetView<TaskController> {
               const SizedBox(height: 4),
               Text(
                 _auth.userEmail,
-                style: const TextStyle(
+                style: TextStyle(
                   fontSize: 13,
                   color: AppColors.textSecondary,
                 ),
@@ -268,7 +268,7 @@ class TaskHeader extends GetView<TaskController> {
                   ),
                   child: const Icon(Icons.settings_outlined, color: AppColors.primary, size: 20),
                 ),
-                title: const Text(
+                title: Text(
                   'Go to Settings',
                   style: TextStyle(
                     fontSize: 14.5,
@@ -276,11 +276,11 @@ class TaskHeader extends GetView<TaskController> {
                     color: AppColors.textPrimary,
                   ),
                 ),
-                subtitle: const Text(
-                  'Configure cloud sync and notifications',
+                subtitle: Text(
+                  'Dark mode, data and account',
                   style: TextStyle(fontSize: 12, color: AppColors.textSecondary),
                 ),
-                trailing: const Icon(Icons.chevron_right, color: AppColors.inactiveNav),
+                trailing: Icon(Icons.chevron_right, color: AppColors.inactiveNav),
                 onTap: () {
                   Get.back();
                   controller.setNavIndex(2); // Switches to Settings tab
@@ -317,7 +317,7 @@ class TaskHeader extends GetView<TaskController> {
             const SizedBox(height: 2),
             Text(
               title,
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 11,
                 fontWeight: FontWeight.w500,
                 color: AppColors.textSecondary,
@@ -336,7 +336,7 @@ class TaskHeader extends GetView<TaskController> {
         color: Colors.transparent,
         child: Container(
           padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
-          decoration: const BoxDecoration(
+          decoration: BoxDecoration(
             color: AppColors.cardSurface,
             borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
           ),
@@ -353,7 +353,7 @@ class TaskHeader extends GetView<TaskController> {
                 ),
               ),
               const SizedBox(height: 16),
-              const Align(
+              Align(
                 alignment: Alignment.centerLeft,
                 child: Text(
                   'Task Actions',
@@ -395,7 +395,7 @@ class TaskHeader extends GetView<TaskController> {
                 icon: Icons.settings_outlined,
                 iconColor: AppColors.primary,
                 title: 'Settings',
-                subtitle: 'Sync preferences, dark mode, and account',
+                subtitle: 'Dark mode, data and account',
                 onTap: () {
                   Get.back();
                   controller.setNavIndex(2); // Switches to Settings tab
@@ -444,7 +444,7 @@ class TaskHeader extends GetView<TaskController> {
       ),
       title: Text(
         title,
-        style: const TextStyle(
+        style: TextStyle(
           fontSize: 14.5,
           fontWeight: FontWeight.w600,
           color: AppColors.textPrimary,
@@ -452,7 +452,7 @@ class TaskHeader extends GetView<TaskController> {
       ),
       subtitle: Text(
         subtitle,
-        style: const TextStyle(
+        style: TextStyle(
           fontSize: 12,
           color: AppColors.textSecondary,
         ),

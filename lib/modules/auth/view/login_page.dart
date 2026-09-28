@@ -25,12 +25,12 @@ class LoginPage extends GetView<LoginController> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text(
+                  Text(
                     'Welcome back',
                     style: TextStyle(fontSize: 28, fontWeight: FontWeight.w700, color: AppColors.textPrimary),
                   ),
                   const SizedBox(height: 4),
-                  const Text(AppStrings.appTagline, style: TextStyle(color: AppColors.textSecondary)),
+                  Text(AppStrings.appTagline, style: TextStyle(color: AppColors.textSecondary)),
                   const SizedBox(height: 32),
                   CustomTextField(
                     controller: controller.emailController,
@@ -62,7 +62,7 @@ class LoginPage extends GetView<LoginController> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      const Text("Don't have an account?", style: TextStyle(color: AppColors.textSecondary)),
+                      Text("Don't have an account?", style: TextStyle(color: AppColors.textSecondary)),
                       TextButton(onPressed: () => Get.offNamed(AppRoutes.signup), child: const Text('Sign up')),
                     ],
                   ),
