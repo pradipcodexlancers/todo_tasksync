@@ -86,7 +86,7 @@ class TasksScreen extends GetView<TaskController> {
                         color: AppColors.inactiveNav.withValues(alpha: 0.5),
                       ),
                       const SizedBox(height: 12),
-                      const Text(
+                      Text(
                         'No tasks found',
                         style: TextStyle(
                           fontSize: 16,
@@ -99,17 +99,22 @@ class TasksScreen extends GetView<TaskController> {
                 );
               }
 
-              return ListView.builder(
-                physics: const BouncingScrollPhysics(),
-                padding: const EdgeInsets.only(bottom: 12),
-                itemCount: tasks.length,
-                itemBuilder: (context, index) {
-                  final task = tasks[index];
-                  return TaskCard(
-                    key: ValueKey(task.key),
-                    task: task,
-                  );
-                },
+              // Pull down to check the internet, sync and load the latest tasks
+              return RefreshIndicator(
+                color: AppColors.primary,
+                onRefresh: controller.refreshTodos,
+                child: ListView.builder(
+                  physics: const AlwaysScrollableScrollPhysics(parent: BouncingScrollPhysics()),
+                  padding: const EdgeInsets.only(bottom: 12),
+                  itemCount: tasks.length,
+                  itemBuilder: (context, index) {
+                    final task = tasks[index];
+                    return TaskCard(
+                      key: ValueKey(task.key),
+                      task: task,
+                    );
+                  },
+                ),
               );
             }),
           ),

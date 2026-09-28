@@ -113,8 +113,8 @@ class TaskBottomNav extends GetView<TaskController> {
                   Container(
                     width: 28,
                     height: 28,
-                    decoration: const BoxDecoration(
-                      color: Color(0xFFF1EFE9),
+                    decoration: BoxDecoration(
+                      color: AppColors.scaffoldBackground,
                       shape: BoxShape.circle,
                     ),
                     child: Icon(
@@ -126,7 +126,7 @@ class TaskBottomNav extends GetView<TaskController> {
                   const SizedBox(height: 3),
                   Text(
                     label,
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 11.5,
                       fontWeight: FontWeight.w600,
                       color: AppColors.inactiveNav,

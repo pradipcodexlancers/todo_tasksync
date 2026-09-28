@@ -24,12 +24,12 @@ class SignupPage extends GetView<SignupController> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text(
+                  Text(
                     'Create account',
                     style: TextStyle(fontSize: 28, fontWeight: FontWeight.w700, color: AppColors.textPrimary),
                   ),
                   const SizedBox(height: 4),
-                  const Text('Sign up to sync your tasks', style: TextStyle(color: AppColors.textSecondary)),
+                  Text('Sign up to sync your tasks', style: TextStyle(color: AppColors.textSecondary)),
                   const SizedBox(height: 32),
                   CustomTextField(
                     controller: controller.nameController,
@@ -84,7 +84,7 @@ class SignupPage extends GetView<SignupController> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      const Text('Already have an account?', style: TextStyle(color: AppColors.textSecondary)),
+                      Text('Already have an account?', style: TextStyle(color: AppColors.textSecondary)),
                       TextButton(onPressed: () => Get.offNamed(AppRoutes.login), child: const Text('Login')),
                     ],
                   ),

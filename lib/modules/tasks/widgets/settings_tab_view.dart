@@ -4,11 +4,12 @@ import '../../../core/constants/app_colors.dart';
 import '../../../core/utils/app_utils.dart';
 import '../../../core/utils/error_handler.dart';
 import '../../../services/auth_service.dart';
+import '../../../services/theme_service.dart';
 import '../controller/task_controller.dart';
 
 /// Settings Tab View
 ///
-/// Complete Settings UI with Account info, Sync preferences, Theme toggle,
+/// Complete Settings UI with Account info, Theme toggle,
 /// task management, and application details.
 class SettingsTabView extends GetView<TaskController> {
   const SettingsTabView({super.key});
@@ -16,6 +17,7 @@ class SettingsTabView extends GetView<TaskController> {
   @override
   Widget build(BuildContext context) {
     final auth = Get.find<AuthService>();
+    final themeService = Get.find<ThemeService>();
     final initialSource = auth.userName.isNotEmpty ? auth.userName : auth.userEmail;
     final initial = initialSource.isEmpty ? '?' : initialSource[0].toUpperCase();
 
@@ -35,7 +37,7 @@ class SettingsTabView extends GetView<TaskController> {
                 ),
           ),
           const SizedBox(height: 4),
-          const Text(
+          Text(
             'Manage your preferences and synchronization',
             style: TextStyle(
               color: AppColors.textSecondary,
@@ -86,7 +88,7 @@ class SettingsTabView extends GetView<TaskController> {
                     children: [
                       Text(
                         auth.userName,
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.w700,
                           color: AppColors.textPrimary,
@@ -95,7 +97,7 @@ class SettingsTabView extends GetView<TaskController> {
                       const SizedBox(height: 3),
                       Text(
                         auth.userEmail,
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontSize: 13,
                           color: AppColors.textSecondary,
                         ),
@@ -124,64 +126,18 @@ class SettingsTabView extends GetView<TaskController> {
 
           const SizedBox(height: 24),
 
-          // Sync Section
-          _buildSectionHeader('Cloud & Sync'),
-          const SizedBox(height: 10),
-          _buildSettingsCard(
-            children: [
-              _buildSwitchTile(
-                icon: Icons.sync,
-                title: 'Auto Sync',
-                subtitle: 'Automatically sync tasks in real-time',
-                value: true,
-                onChanged: (val) {},
-              ),
-              const Divider(height: 1, indent: 56, endIndent: 16),
-              _buildTapTile(
-                icon: Icons.cloud_done_outlined,
-                title: 'Sync Now',
-                subtitle: 'Push pending changes to cloud',
-                trailing: Obx(() => Text(
-                      controller.isSyncing.value
-                          ? 'Syncing...'
-                          : controller.pendingSyncCount > 0
-                              ? '${controller.pendingSyncCount} pending'
-                              : 'Synced',
-                      style: const TextStyle(
-                        fontSize: 12,
-                        fontWeight: FontWeight.w600,
-                        color: AppColors.syncBadgeText,
-                      ),
-                    )),
-                onTap: controller.syncTodos,
-              ),
-            ],
-          ),
-
-          const SizedBox(height: 24),
-
           // Preferences Section
           _buildSectionHeader('Preferences'),
           const SizedBox(height: 10),
           _buildSettingsCard(
             children: [
-              _buildSwitchTile(
-                icon: Icons.notifications_outlined,
-                title: 'Reminders & Notifications',
-                subtitle: 'Get alerts for due tasks',
-                value: true,
-                onChanged: (val) {},
-              ),
-              const Divider(height: 1, indent: 56, endIndent: 16),
-              _buildSwitchTile(
-                icon: Icons.dark_mode_outlined,
-                title: 'Dark Mode',
-                subtitle: 'Toggle dark interface appearance',
-                value: Get.isDarkMode,
-                onChanged: (isDark) {
-                  Get.changeThemeMode(isDark ? ThemeMode.dark : ThemeMode.light);
-                },
-              ),
+              Obx(() => _buildSwitchTile(
+                    icon: Icons.dark_mode_outlined,
+                    title: 'Dark Mode',
+                    subtitle: 'Toggle dark interface appearance',
+                    value: themeService.isDark.value,
+                    onChanged: themeService.setDarkMode,
+                  )),
             ],
           ),
 
@@ -258,7 +214,7 @@ class SettingsTabView extends GetView<TaskController> {
           // App Info
           Center(
             child: Column(
-              children: const [
+              children: [
                 Text(
                   'TaskSync v1.0.0',
                   style: TextStyle(
@@ -267,7 +223,7 @@ class SettingsTabView extends GetView<TaskController> {
                     color: AppColors.textMuted,
                   ),
                 ),
-                SizedBox(height: 4),
+                const SizedBox(height: 4),
                 Text(
                   'Offline-first Flutter & GetX Architecture',
                   style: TextStyle(
@@ -287,7 +243,7 @@ class SettingsTabView extends GetView<TaskController> {
   Widget _buildSectionHeader(String title) {
     return Text(
       title,
-      style: const TextStyle(
+      style: TextStyle(
         fontSize: 14,
         fontWeight: FontWeight.w700,
         color: AppColors.textSecondary,
@@ -342,7 +298,7 @@ class SettingsTabView extends GetView<TaskController> {
               children: [
                 Text(
                   title,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 14.5,
                     fontWeight: FontWeight.w600,
                     color: AppColors.textPrimary,
@@ -351,7 +307,7 @@ class SettingsTabView extends GetView<TaskController> {
                 const SizedBox(height: 2),
                 Text(
                   subtitle,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 12,
                     color: AppColors.textSecondary,
                   ),
@@ -414,7 +370,7 @@ class SettingsTabView extends GetView<TaskController> {
                   const SizedBox(height: 2),
                   Text(
                     subtitle,
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 12,
                       color: AppColors.textSecondary,
                     ),
@@ -423,7 +379,7 @@ class SettingsTabView extends GetView<TaskController> {
               ),
             ),
             trailing ??
-                const Icon(
+                Icon(
                   Icons.chevron_right_rounded,
                   size: 20,
                   color: AppColors.inactiveNav,

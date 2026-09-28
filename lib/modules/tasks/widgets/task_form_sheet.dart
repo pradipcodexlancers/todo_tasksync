@@ -37,7 +37,7 @@ class TaskFormSheet {
             top: 20,
             bottom: MediaQuery.of(context).viewInsets.bottom + 24,
           ),
-          decoration: const BoxDecoration(
+          decoration: BoxDecoration(
             color: AppColors.cardSurface,
             borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
           ),
@@ -65,14 +65,14 @@ class TaskFormSheet {
                   children: [
                     Text(
                       isEdit ? 'Edit Task' : 'Create New Task',
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 19,
                         fontWeight: FontWeight.w700,
                         color: AppColors.textPrimary,
                       ),
                     ),
                     IconButton(
-                      icon: const Icon(Icons.close, color: AppColors.textSecondary),
+                      icon: Icon(Icons.close, color: AppColors.textSecondary),
                       onPressed: () => Get.back(),
                     ),
                   ],
@@ -149,13 +149,13 @@ class TaskFormSheet {
                       ),
                       child: Row(
                         children: [
-                          const Icon(Icons.calendar_today_outlined, size: 18, color: AppColors.textSecondary),
+                          Icon(Icons.calendar_today_outlined, size: 18, color: AppColors.textSecondary),
                           const SizedBox(width: 10),
                           Text(
                             dueDate == null
                                 ? 'No due date'
                                 : TodoModel(title: '', dueDate: dueDate).dueText,
-                            style: const TextStyle(
+                            style: TextStyle(
                               fontSize: 14,
                               fontWeight: FontWeight.w600,
                               color: AppColors.textPrimary,
@@ -241,12 +241,12 @@ class TaskFormSheet {
       ),
       decoration: InputDecoration(
         labelText: label,
-        labelStyle: const TextStyle(
+        labelStyle: TextStyle(
           color: AppColors.textSecondary,
           fontSize: 14,
         ),
         hintText: hint,
-        hintStyle: const TextStyle(
+        hintStyle: TextStyle(
           color: AppColors.textMuted,
           fontSize: 14,
         ),
@@ -267,7 +267,7 @@ class TaskFormSheet {
   static Widget _buildSectionLabel(String text) {
     return Text(
       text,
-      style: const TextStyle(
+      style: TextStyle(
         fontSize: 13.5,
         fontWeight: FontWeight.w700,
         color: AppColors.textPrimary,
