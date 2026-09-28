@@ -9,6 +9,7 @@ import 'core/theme/app_theme.dart';
 import 'services/auth_service.dart';
 import 'services/local_storage_service.dart';
 import 'services/storage_service.dart';
+import 'services/theme_service.dart';
 import 'services/todo_service.dart';
 
 /// Entry point of the application
@@ -35,6 +36,9 @@ Future<void> _initServices() async {
   // Local Storage Service (GetStorage) for todos
   await Get.putAsync<LocalStorageService>(() => LocalStorageService().init());
 
+  // Theme Service (saved light / dark choice)
+  Get.put<ThemeService>(ThemeService(), permanent: true);
+
   // Auth Service (Supabase session, login, logout)
   Get.put<AuthService>(AuthService(), permanent: true);
 
@@ -55,7 +59,7 @@ class MyApp extends StatelessWidget {
       // Light & Dark Themes
       theme: AppTheme.lightTheme,
       darkTheme: AppTheme.darkTheme,
-      themeMode: ThemeMode.light,
+      themeMode: Get.find<ThemeService>().themeMode,
 
       // Navigation & Routing via GetPages
       initialRoute: AppRoutes.initial,

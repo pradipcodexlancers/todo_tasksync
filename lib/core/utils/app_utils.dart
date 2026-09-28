@@ -57,13 +57,13 @@ class AppUtils {
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
         title: Text(
           title,
-          style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w700, color: AppColors.textPrimary),
+          style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700, color: AppColors.textPrimary),
         ),
-        content: Text(message, style: const TextStyle(fontSize: 14, height: 1.4, color: AppColors.textSecondary)),
+        content: Text(message, style: TextStyle(fontSize: 14, height: 1.4, color: AppColors.textSecondary)),
         actions: [
           TextButton(
             onPressed: () => Get.back(result: false),
-            child: Text(cancelText, style: const TextStyle(color: AppColors.textSecondary)),
+            child: Text(cancelText, style: TextStyle(color: AppColors.textSecondary)),
           ),
           TextButton(
             onPressed: () => Get.back(result: true),

@@ -37,7 +37,7 @@ class CommonLoader extends StatelessWidget {
             const SizedBox(height: 12),
             Text(
               message!,
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 14,
                 color: AppColors.textSecondary,
               ),

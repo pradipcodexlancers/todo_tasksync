@@ -1,9 +1,11 @@
 import 'dart:async';
 
-import 'package:connectivity_plus/connectivity_plus.dart';
+import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
+import 'package:internet_connection_checker_plus/internet_connection_checker_plus.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+import '../../../core/utils/app_utils.dart';
 import '../../../core/utils/error_handler.dart';
 import '../../../services/local_storage_service.dart';
 import '../../../services/storage_service.dart';
@@ -23,7 +25,9 @@ class TaskController extends GetxController {
   final TodoService _todoService = Get.find<TodoService>();
   final LocalStorageService _localStorage = Get.find<LocalStorageService>();
   final StorageService _storage = Get.find<StorageService>();
-  StreamSubscription<List<ConnectivityResult>>? _connectivitySubscription;
+  final InternetConnection _internet = InternetConnection();
+  StreamSubscription<InternetStatus>? _internetSubscription;
+  AppLifecycleListener? _lifecycleListener;
 
   // All todos, including the ones waiting to be deleted on the server
   final RxList<TodoModel> _todos = <TodoModel>[].obs;
@@ -53,23 +57,42 @@ class TaskController extends GetxController {
     // Show cached todos instantly (works offline), then sync with Supabase
     _todos.assignAll(_localStorage.getTodos());
     isLoading.value = _todos.isEmpty;
-    _listenConnectivity();
+
+    // isOnline follows real internet access (not just "Wi-Fi connected"),
+    // so it only turns true once requests can actually reach the server
+    _internetSubscription = _internet.onStatusChange.listen((status) {
+      isOnline.value = status == InternetStatus.connected;
+    });
+
+    // Back online -> push offline changes automatically
+    ever<bool>(isOnline, (online) {
+      if (online) syncTodos();
+    });
+
+    // Coming back to the app -> fetch the latest data
+    _lifecycleListener = AppLifecycleListener(onResume: syncTodos);
+
     syncTodos();
   }
 
   @override
   void onClose() {
-    _connectivitySubscription?.cancel();
+    _internetSubscription?.cancel();
+    _lifecycleListener?.dispose();
     super.onClose();
   }
 
-  void _listenConnectivity() {
-    _connectivitySubscription = Connectivity().onConnectivityChanged.listen((results) {
-      final wasOnline = isOnline.value;
-      isOnline.value = !results.contains(ConnectivityResult.none);
-      // Back online -> push offline changes automatically
-      if (!wasOnline && isOnline.value) syncTodos();
-    });
+  /// Pull-to-refresh: check the internet, then sync and reload from the server
+  Future<void> refreshTodos() async {
+    isOnline.value = await _internet.hasInternetAccess;
+    if (!isOnline.value) {
+      AppUtils.showSnackbar(
+        title: 'No internet',
+        message: 'Showing tasks saved on this device. Changes will sync when you are back online.',
+      );
+      return;
+    }
+    await syncTodos();
   }
 
   /// Filtered tasks computed property
@@ -209,12 +232,10 @@ class TaskController extends GetxController {
         ...serverTodos.where((t) => !pendingIds.contains(t.id)),
       ]);
       await _saveLocally();
-      isOnline.value = true;
     } on PostgrestException catch (e) {
       AppErrorHandler.show(e, title: 'Sync failed');
     } catch (_) {
-      // No internet: changes stay pending and are pushed when back online
-      isOnline.value = false;
+      // No internet: changes stay pending and are pushed when isOnline turns true
     } finally {
       isSyncing.value = false;
       isLoading.value = false;

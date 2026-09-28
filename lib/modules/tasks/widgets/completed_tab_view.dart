@@ -40,7 +40,7 @@ class CompletedTabView extends GetView<TaskController> {
                         controller.tasks.where((t) => t.isCompleted).length;
                     return Text(
                       '$completedCount tasks completed so far',
-                      style: const TextStyle(
+                      style: TextStyle(
                         color: AppColors.textSecondary,
                         fontSize: 13.5,
                       ),
@@ -88,7 +88,7 @@ class CompletedTabView extends GetView<TaskController> {
                         ),
                       ),
                       const SizedBox(height: 16),
-                      const Text(
+                      Text(
                         'No completed tasks yet',
                         style: TextStyle(
                           fontSize: 16,
@@ -97,7 +97,7 @@ class CompletedTabView extends GetView<TaskController> {
                         ),
                       ),
                       const SizedBox(height: 6),
-                      const Text(
+                      Text(
                         'Check off tasks from the Tasks list to see them here.',
                         textAlign: TextAlign.center,
                         style: TextStyle(
